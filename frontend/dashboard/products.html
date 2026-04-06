@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos | Panel Vendedor</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo logo-left">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">LUXE Vendedor</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <div class="nav-icons">
+                <div class="user-menu">
+                    <button class="user-btn" id="userMenuBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="user-name" id="userNameDisplay"></span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#" id="logoutBtn">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
+            <div class="sidebar-header">
+                <div class="store-name" id="storeName">Mi Tienda</div>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-8H9v8H5a2 2 0 0 1-2-2z" />
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="products.html" class="active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M20 7h-4.18A3 3 0 0 0 16 5.18V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v1.18A3 3 0 0 0 8.18 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+                            <path d="M8 7h8" />
+                            <circle cx="12" cy="13" r="2" />
+                        </svg>
+                        <span>Productos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="orders.html">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
+                        </svg>
+                        <span>Pedidos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="sales.html">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                            <circle cx="12" cy="12" r="4" />
+                        </svg>
+                        <span>Ventas</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <h1>Gestionar Productos</h1>
+
+            <div class="product-form">
+                <h3>Agregar Nuevo Producto</h3>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label>Nombre del producto</label>
+                        <input type="text" id="productName" placeholder="Ej: Cadena de Oro" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio</label>
+                        <input type="number" id="productPrice" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="productCategory">
+                            <option value="cadenas">Cadenas</option>
+                            <option value="anillos">Anillos</option>
+                            <option value="zapatos">Zapatos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagen del producto</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="productImageFile" accept="image/*" style="display: none;">
+                            <div id="imageUploadArea" class="image-upload-area">
+                                <div style="font-size: 3rem;">🖼️</div>
+                                <p>Haz clic para seleccionar una imagen</p>
+                                <p class="hint">o arrastra y suelta aquí</p>
+                                <small>Formatos: JPG,JPEG,PNG,GIF (Max 2MB)</small>
+                            </div>
+                            <div id="imagePreview" style="display: none;">
+                                <img id="previewImg" src="" alt="Vista previa">
+                                <button type="button" id="removeImageBtn">Eliminar imagen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Imágenes adicionales -->
+                    <div class="form-group">
+                        <label>Galería de imágenes (adicionales)</label>
+                        <div class="multi-image-upload">
+                            <input type="file" id="additionalImages" accept=".jpg,.jpeg,.png,.gif" multiple>
+                            <div id="additionalImagesPreview" class="images-preview"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="number" id="productStock" value="10">
+                    </div>
+
+
+                    <!-- Tallas y stock -->
+                    <div class="form-group">
+                        <label>Tallas y stock (para zapatos)</label>
+                        <div id="sizesContainer">
+                            <div class="size-row">
+                                <input type="text" placeholder="Talla (ej: 36, S, M)" class="size-name">
+                                <input type="number" placeholder="Stock" class="size-stock" min="0">
+                                <button type="button" class="btn-add-size">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="productDescription" rows="3" placeholder="Descripción del producto..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Agregar Producto</button>
+                </form>
+            </div>
+
+            <h3>Mis Productos</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Ventas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productsList"></tbody>
+                </>
+        </main>
+    </div>
+
+    <!-- Modal de confirmación personalizado -->
+    <div id="deleteConfirmModal" class="custom-modal" style="display: none;">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3>Confirmar eliminación</h3>
+                <button class="custom-modal-close">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <p>¿Estás seguro de que deseas eliminar este producto?</p>
+                <p class="custom-modal-warning">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="custom-modal-footer">
+                <button class="custom-modal-btn cancel">Cancelar</button>
+                <button class="custom-modal-btn confirm">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="../js/localStorage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+
+</html>

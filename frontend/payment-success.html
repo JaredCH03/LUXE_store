@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso | LUXE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: white;
+        }
+        .btn-continue {
+            background: #c9a03d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .btn-continue:hover {
+            background: #b58c2e;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h1>¡Pago Exitoso!</h1>
+            <p>Tu pedido ha sido procesado correctamente</p>
+            <div id="orderId" style="margin: 1rem 0; color: #666;"></div>
+            <a href="index.html" class="btn-continue">Seguir Comprando</a>
+        </div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('orderId');
+        if (orderId) {
+            document.getElementById('orderId').innerHTML = `ID de orden: ${orderId}`;
+        }
+    </script>
+</body>
+</html>
