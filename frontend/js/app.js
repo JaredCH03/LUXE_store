@@ -2,11 +2,16 @@
 // app.js - VERSIÓN CON SOPORTE DE TALLAS (FUNCIONAL)
 // =====================================================
 
-let cart = [];
+// EXPONER CARRITO GLOBALMENTE
+window.cart = [];
+window.cartTotal = 0;
+
+let cart = window.cart;  // Usar referencia global
 let cartTotal = 0;
 let currentPage = 1;
 let totalPages = 1;
 let isLoading = false;
+
 
 async function fetchProducts(page = 1) {
     if (isLoading) return [];
@@ -44,6 +49,26 @@ function showNotification(message, type = 'success') {
     notification.textContent = message;
     document.body.appendChild(notification);
     setTimeout(() => notification.remove(), 2500);
+}
+// Asegurar que showNotification no sea sobrescrita
+if (typeof window.showNotification === 'undefined') {
+    window.showNotification = function(message, type = 'success') {
+        const existing = document.querySelector('.custom-notification');
+        if (existing) existing.remove();
+        const notification = document.createElement('div');
+        const colors = { success: '#4caf50', error: '#f44336', info: '#2196f3' };
+        notification.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: ${colors[type]}; color: white;
+            padding: 1rem 1.5rem; border-radius: 10px;
+            z-index: 2000;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 2500);
+    };
 }
 
 async function renderProducts(page = 1) {
@@ -150,10 +175,16 @@ function renderPaginationControls() {
     });
 }
 
-function saveCart() { localStorage.setItem('luxe_cart', JSON.stringify(cart)); }
+function saveCart() { 
+    localStorage.setItem('luxe_cart', JSON.stringify(window.cart));
+}
 function loadCart() {
     const saved = localStorage.getItem('luxe_cart');
-    if (saved) { cart = JSON.parse(saved); updateCartUI(); }
+    if (saved) { 
+        window.cart = JSON.parse(saved);
+        cart = window.cart;  // Sincronizar
+        updateCartUI(); 
+    }
 }
 
 function updateCartUI() 
@@ -190,6 +221,9 @@ function updateCartUI()
     renderCartItems();
     saveCart();
 }
+window.updateCartUI = updateCartUI;
+window.saveCart = saveCart;
+window.loadCart = loadCart;
 
 function renderCartItems() {
     const container = document.getElementById('cartItems');
@@ -307,7 +341,7 @@ window.addToCart = async function (id) {
 };
 
 // Reemplaza tu función updateQuantity existente con esta:
-/*window.updateQuantity = function (id, size, change) {
+window.updateQuantity = function (id, size, change) {
     console.log('updateQuantity llamado:', {id, size, change});
     
     // Normalizar size: undefined, null o string vacío se tratan como "sin talla"
@@ -356,7 +390,7 @@ window.removeFromCart = function (id, size) {
             showNotification(`${removedItem.name} eliminado del carrito`, 'info');
         }
     }
-};*/
+};
 
 
 
@@ -442,6 +476,12 @@ function initMobileMenu() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // No ejecutar en páginas del dashboard
+    if (window.location.pathname.includes('dashboard')) {
+        console.log('Dashboard detectado, app.js no se ejecuta completamente');
+        return;
+    }
+    
     loadCart();
     initCartModal();
     initCheckoutButton();
