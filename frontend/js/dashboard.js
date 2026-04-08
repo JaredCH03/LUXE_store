@@ -2,8 +2,8 @@
 // DASHBOARD VENDEDOR - VERSIÓN CORREGIDA
 // =====================================================
 
-//const API_URL = 'http://localhost:5000/api';
-
+const API_URL = 'http://localhost:5000/api';
+console.log('API_URL en dashboard.js:', typeof API_URL !== 'undefined' ? API_URL : 'NO DEFINIDA');
 let selectedImage = null;
 let additionalImagesFiles = [];
 let sizes = [];
@@ -122,11 +122,11 @@ async function deleteProductAPI(productId) {
 async function performDeleteProduct(productId) {
     const deleted = await deleteProductAPI(productId);
     if (deleted) {
-        showNotification('Producto eliminado correctamente', 'success');
+        showDashboardNotification('Producto eliminado correctamente', 'success');
         await renderProductsList();
         if (document.getElementById('dynamicContent')) await loadDashboardContent();
     } else {
-        showNotification('Error al eliminar producto', 'error');
+        showDashboardNotification('Error al eliminar producto', 'error');
     }
 }
 
@@ -134,7 +134,7 @@ async function performDeleteProduct(productId) {
 
 function handleImageFile(file) {
     if (file.size > 2 * 1024 * 1024) {
-        showNotification('La imagen no puede exceder los 2MB', 'error');
+        showDashboardNotification('La imagen no puede exceder los 2MB', 'error');
         return;
     }
     const img = new Image();
@@ -165,7 +165,7 @@ function handleImageFile(file) {
         if (previewImg) previewImg.src = compressedDataUrl;
         if (previewContainer) previewContainer.style.display = 'block';
         if (uploadArea) uploadArea.style.display = 'none';
-        showNotification(`Imagen cargada`, 'success');
+        showDashboardNotification(`Imagen cargada`, 'success');
         URL.revokeObjectURL(objectUrl);
     };
     img.src = objectUrl;
@@ -179,7 +179,7 @@ function removeSelectedImage() {
     if (fileInput) fileInput.value = '';
     if (previewContainer) previewContainer.style.display = 'none';
     if (uploadArea) uploadArea.style.display = 'block';
-    showNotification('Imagen eliminada', 'info');
+    showDashboardNotification('Imagen eliminada', 'info');
 }
 
 function initImageUpload() {
@@ -212,7 +212,7 @@ function initMultiImageUpload() {
         const files = Array.from(e.target.files);
         files.forEach(file => {
             if (file.size > 2 * 1024 * 1024) {
-                showNotification('Imagen excede 2MB', 'error');
+                showDashboardNotification('Imagen excede 2MB', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -346,11 +346,11 @@ async function addNewProduct() {
     const description = document.getElementById('productDescription')?.value;
 
     if (!name || !price) {
-        showNotification('Nombre y precio son requeridos', 'error');
+        showDashboardNotification('Nombre y precio son requeridos', 'error');
         return;
     }
     if (!selectedImage) {
-        showNotification('Por favor, selecciona una imagen principal', 'error');
+        showDashboardNotification('Por favor, selecciona una imagen principal', 'error');
         return;
     }
 
@@ -384,7 +384,7 @@ sizes.forEach(s => {
    /*alert('Revisa la consola (F12). ¿El objeto sizes tiene datos?');*/
     const created = await createProductAPI(newProduct);
     if (created) {
-        showNotification('Producto agregado correctamente', 'success');
+        showDashboardNotification('Producto agregado correctamente', 'success');
         document.getElementById('addProductForm')?.reset();
         removeSelectedImage();
         additionalImagesFiles = [];
@@ -392,9 +392,11 @@ sizes.forEach(s => {
         renderAdditionalImagesPreview();
         renderSizesRows();
         await renderProductsList();
-        if (document.getElementById('dynamicContent')) await loadDashboardContent();
+        if (document.getElementById('dynamicContent') && window.location.pathname.includes ('dashboard')){
+            await loadDashboardContent();
+        }
     } else {
-        showNotification('Error al agregar producto', 'error');
+        showDashboardNotification('Error al agregar producto', 'error');
     }
 }
 
@@ -421,11 +423,11 @@ window.editProduct = async function(productId) {
             });
             const data = await response.json();
             if (data.success) {
-                showNotification('Producto actualizado', 'success');
+                showDashboardNotification('Producto actualizado', 'success');
                 await renderProductsList();
                 if (document.getElementById('dynamicContent')) await loadDashboardContent();
             } else {
-                showNotification('Error al actualizar', 'error');
+                showDashboardNotification('Error al actualizar', 'error');
             }
         }
     }
@@ -588,7 +590,7 @@ function initDashboardUserMenu() {
     }
 }
 
-function showNotification(message, type) {
+function showDashboardNotification(message, type) {
     const existing = document.querySelector('.dashboard-notification');
     if (existing) existing.remove();
     const notification = document.createElement('div');
