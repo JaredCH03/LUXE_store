@@ -1,5 +1,5 @@
 // =====================================================
-// PÁGINA DE DETALLE DEL PRODUCTO (FUNCIONAL)
+// PÁGINA DE DETALLE DEL PRODUCTO - VERSIÓN DEFINITIVA
 // =====================================================
 
 let currentProduct = null;
@@ -64,7 +64,13 @@ function displayProductInfo() {
             btn.textContent = size;
             btn.dataset.size = size;
             btn.dataset.stock = stock;
-            btn.addEventListener('click', () => selectSize(size, btn));
+            if (stock > 0) {
+                btn.addEventListener('click', () => selectSize(size, btn));
+            } else {
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.title = 'Sin stock';
+            }
             sizeOptions.appendChild(btn);
         }
     } else {
@@ -106,7 +112,12 @@ function createThumbnail(url) {
     return img;
 }
 
+// ========== FUNCIÓN PRINCIPAL - AGREGAR AL CARRITO ==========
 async function addToCartWithSize() {
+    console.log('=== AGREGANDO AL CARRITO ===');
+    console.log('Producto:', currentProduct?.name);
+    console.log('Talla:', selectedSize);
+    
     if (!isLoggedIn()) {
         showNotification('Inicia sesión para agregar productos', 'error');
         setTimeout(() => { window.location.href = 'login.html'; }, 1500);
@@ -119,38 +130,59 @@ async function addToCartWithSize() {
         return;
     }
     
+    // Obtener el carrito actual
     let cart = JSON.parse(localStorage.getItem('luxe_cart') || '[]');
+    console.log('Carrito actual:', cart);
+    
+    // Buscar si el producto ya existe
     const existingIndex = cart.findIndex(item => item.id === currentProduct.id && item.size === selectedSize);
     
     if (existingIndex !== -1) {
         cart[existingIndex].quantity += 1;
+        console.log('Producto existente, nueva cantidad:', cart[existingIndex].quantity);
     } else {
         cart.push({
             id: currentProduct.id,
             name: currentProduct.name,
             price: parseFloat(currentProduct.price),
             image: currentProduct.image,
-            size: selectedSize,
+            size: selectedSize || null,
             quantity: 1
         });
+        console.log('Producto nuevo agregado');
     }
     
+    // Guardar en localStorage
     localStorage.setItem('luxe_cart', JSON.stringify(cart));
+    console.log('Carrito guardado:', cart);
     
+    // Actualizar el carrito global si existe
+    if (window.cart) {
+        window.cart.length = 0;
+        cart.forEach(item => window.cart.push(item));
+    }
+    
+    // Actualizar la UI del carrito
     if (typeof updateCartUI === 'function') {
         updateCartUI();
+        console.log('updateCartUI ejecutado');
     } else {
+        console.warn('updateCartUI no disponible, recargando...');
         window.location.reload();
         return;
     }
     
-    showNotification(`${currentProduct.name} agregado al carrito`, 'success');
+    showNotification(`${currentProduct.name}${selectedSize ? ` (Talla ${selectedSize})` : ''} agregado al carrito`, 'success');
 }
 
+// Inicializar
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Detail.js inicializado');
     loadProductDetail();
     const addBtn = document.getElementById('addToCartBtn');
     if (addBtn) {
+        addBtn.removeEventListener('click', addToCartWithSize);
         addBtn.addEventListener('click', addToCartWithSize);
+        console.log('Botón configurado');
     }
 });
