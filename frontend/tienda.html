@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE | Tienda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+</head>
+<body>
+    <!-- ============ NAVBAR ============ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="logo-icon">✦</span>
+                    <span class="logo-text">LUXE</span>
+                </a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="tienda.html" class="nav-link active">Tienda</a></li>
+                <li><a href="#cadenas" class="nav-link">Cadenas</a></li>
+                <li><a href="#anillos" class="nav-link">Anillos</a></li>
+                <li><a href="#zapatos" class="nav-link">Zapatos</a></li>
+            </ul>
+            <div class="nav-icons">
+                <!-- Búsqueda -->
+                <button class="search-toggle-btn" id="searchToggleBtn" title="Buscar productos">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </button>
+
+                <!-- Usuario no logueado -->
+                <div class="logged-out-only">
+                    <a href="login.html" class="user-btn" title="Iniciar Sesión">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Usuario logueado -->
+                <div class="logged-in-only" style="display: none;">
+                    <div class="user-menu">
+                        <button class="user-btn" id="userMenuBtn" title="Mi cuenta">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span class="user-name"></span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#" id="dashboardLink" style="display: none;"> Dashboard</a>
+                            <a href="#" id="ordersLink">Mis Pedidos</a>
+                            <hr style="margin: 0.3rem 0; border-color: #eee;">
+                            <a href="#" id="logoutBtn" style="color: #f44336;">Cerrar Sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carrito -->
+                <button class="cart-btn" id="cartBtn" title="Carrito">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ PANEL DE BÚSQUEDA DESPLEGABLE ============ -->
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-content">
+            <div class="search-header">
+                <h3>🔍 Buscar Productos</h3>
+                <button class="close-search-btn" id="closeSearchBtn">✕</button>
+            </div>
+
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="¿Qué estás buscando?" class="search-input">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">✕</button>
+            </div>
+
+            <div class="filters-wrapper">
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">Todas las categorías</option>
+                    <option value="cadenas">Cadenas</option>
+                    <option value="anillos">Anillos</option>
+                    <option value="zapatos">Zapatos</option>
+                </select>
+
+                <div class="price-filter">
+                    <input type="number" id="minPrice" placeholder="$ Mín" class="price-input" min="0">
+                    <span>-</span>
+                    <input type="number" id="maxPrice" placeholder="$ Máx" class="price-input" min="0">
+                </div>
+
+                <label class="stock-filter">
+                    <input type="checkbox" id="inStockOnly">
+                    <span>Solo en stock</span>
+                </label>
+
+                <select id="sortBy" class="filter-select">
+                    <option value="default">Más recientes</option>
+                    <option value="price_asc">Precio: Menor a Mayor</option>
+                    <option value="price_desc">Precio: Mayor a Menor</option>
+                    <option value="best_selling">Más vendidos</option>
+                </select>
+
+                <button id="clearFiltersBtn" class="clear-filters-btn">Limpiar filtros</button>
+            </div>
+
+            <div id="resultsCount" class="results-count"></div>
+        </div>
+    </div>
+
+    <!-- Overlay para el panel de búsqueda -->
+    <div class="search-overlay" id="searchOverlay"></div>
+
+    <!-- ============ TIENDA CONTENT ============ -->
+    <div class="tienda-container">
+        <main class="main-content">
+            <!-- Encabezado de tienda -->
+            <div class="tienda-header">
+                <h1 class="tienda-title">Nuestra Colección</h1>
+                <p class="tienda-subtitle">Descubre piezas exclusivas diseñadas para ti</p>
+            </div>
+
+            <section id="cadenas" class="category-section">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-tag">Lujo Atemporal</span>
+                        <h2 class="section-title">Cadenas Exclusivas</h2>
+                        <p class="section-desc">Piezas únicas en oro y plata de ley</p>
+                    </div>
+                    <div class="products-grid" id="cadenasGrid"></div>
+                </div>
+            </section>
+
+            <section id="anillos" class="category-section">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-tag">Elegancia Pura</span>
+                        <h2 class="section-title">Anillos de Autor</h2>
+                        <p class="section-desc">Diseños exclusivos para momentos especiales</p>
+                    </div>
+                    <div class="products-grid" id="anillosGrid"></div>
+                </div>
+            </section>
+
+            <section id="zapatos" class="category-section">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-tag">Estilo Urbano</span>
+                        <h2 class="section-title">Sneakers Premium</h2>
+                        <p class="section-desc">Confort y estilo en cada paso</p>
+                    </div>
+                    <div class="products-grid" id="zapatosGrid"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">✦ LUXE</span>
+                <p>Elegancia y sofisticación para quienes aprecian lo excepcional.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Explorar</h4>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="tienda.html">Tienda</a></li>
+                    <li><a href="tienda.html#cadenas">Cadenas</a></li>
+                    <li><a href="tienda.html#anillos">Anillos</a></li>
+                    <li><a href="tienda.html#zapatos">Zapatos</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Soporte</h4>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Envíos</a></li>
+                    <li><a href="#">Devoluciones</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>📧 contacto@luxe.com</p>
+                <p>📞 +505 8935-6363</p>
+                <p>📍 Managua, Nicaragua</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 LUXE. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============ CART MODAL ============ -->
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-modal-content">
+            <div class="cart-header">
+                <h3>Tu Carrito</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Manejar categoría desde la URL
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const categoria = params.get('categoria');
+        
+        // También verificar sessionStorage
+        const savedCategory = sessionStorage.getItem('selectedCategory');
+        const targetCategory = categoria || savedCategory;
+        
+        if (targetCategory) {
+            console.log('🎯 Redirigiendo a categoría:', targetCategory);
+            
+            // Limpiar sessionStorage
+            sessionStorage.removeItem('selectedCategory');
+            
+            // Esperar a que los productos carguen
+            setTimeout(() => {
+                const section = document.getElementById(targetCategory);
+                if (section) {
+                    console.log('✅ Sección encontrada, haciendo scroll...');
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Resaltar la sección brevemente
+                    section.style.transition = 'box-shadow 0.5s';
+                    section.style.boxShadow = '0 0 0 4px rgba(201, 160, 61, 0.3)';
+                    setTimeout(() => {
+                        section.style.boxShadow = 'none';
+                    }, 1500);
+                } else {
+                    console.warn('⚠️ Sección no encontrada:', targetCategory);
+                    console.log('Secciones disponibles:', 
+                        document.querySelectorAll('section[id]'));
+                }
+            }, 800);
+        }
+    })();
+</script>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="js/config.js"></script>
+    <script src="js/localStorage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
