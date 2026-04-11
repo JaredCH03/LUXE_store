@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE | Elegancia y Sofisticación</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+</head>
+<body>
+    <!-- ============ NAVBAR ============ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="logo-icon">✦</span>
+                    <span class="logo-text">LUXE</span>
+                </a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link active">Inicio</a></li>
+                <li><a href="tienda.html" class="nav-link">Tienda</a></li>
+                <li><a href="#categorias" class="nav-link">Categorías</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            <div class="nav-icons">
+                <!-- Búsqueda (lupa) -->
+                <button class="search-toggle-btn" id="searchToggleBtn" title="Buscar productos">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </button>
+
+                <!-- Usuario no logueado -->
+                <div class="logged-out-only">
+                    <a href="login.html" class="user-btn" title="Iniciar Sesión">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Usuario logueado -->
+                <div class="logged-in-only" style="display: none;">
+                    <div class="user-menu">
+                        <button class="user-btn" id="userMenuBtn" title="Mi cuenta">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span class="user-name"></span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#" id="dashboardLink" style="display: none;"> Dashboard</a>
+                            <a href="#" id="ordersLink"> Mis Pedidos</a>
+                            <hr style="margin: 0.3rem 0; border-color: #eee;">
+                            <a href="#" id="logoutBtn" style="color: #f44336;"> Cerrar Sesión</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carrito -->
+                <button class="cart-btn" id="cartBtn" title="Carrito">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ PANEL DE BÚSQUEDA DESPLEGABLE ============ -->
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-content">
+            <div class="search-header">
+                <h3>🔍 Buscar Productos</h3>
+                <button class="close-search-btn" id="closeSearchBtn">✕</button>
+            </div>
+
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="¿Qué estás buscando?" class="search-input">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">✕</button>
+            </div>
+
+            <div class="filters-wrapper">
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">Todas las categorías</option>
+                    <option value="cadenas">Cadenas</option>
+                    <option value="anillos">Anillos</option>
+                    <option value="zapatos">Zapatos</option>
+                </select>
+
+                <div class="price-filter">
+                    <input type="number" id="minPrice" placeholder="$ Mín" class="price-input" min="0">
+                    <span>-</span>
+                    <input type="number" id="maxPrice" placeholder="$ Máx" class="price-input" min="0">
+                </div>
+
+                <label class="stock-filter">
+                    <input type="checkbox" id="inStockOnly">
+                    <span>Solo en stock</span>
+                </label>
+
+                <select id="sortBy" class="filter-select">
+                    <option value="default">Más recientes</option>
+                    <option value="price_asc">Precio: Menor a Mayor</option>
+                    <option value="price_desc">Precio: Mayor a Menor</option>
+                    <option value="best_selling">Más vendidos</option>
+                </select>
+
+                <button id="clearFiltersBtn" class="clear-filters-btn">Limpiar filtros</button>
+            </div>
+
+            <div id="resultsCount" class="results-count"></div>
+        </div>
+    </div>
+
+    <!-- Overlay para el panel de búsqueda -->
+    <div class="search-overlay" id="searchOverlay"></div>
+
+    <!-- ============ HERO SECTION ============ -->
+    <section class="hero-landing">
+        <div class="hero-background">
+            <div class="hero-gradient"></div>
+            <div class="hero-particles"></div>
+        </div>
+        <div class="hero-content">
+            <span class="hero-badge animate-fade-up">✨ Colección Exclusiva 2026</span>
+            <h1 class="hero-title animate-fade-up delay-1">Elegancia que<br>trasciende el tiempo</h1>
+            <p class="hero-subtitle animate-fade-up delay-2">Descubre nuestra exclusiva colección de joyas y accesorios de lujo</p>
+            <div class="hero-buttons animate-fade-up delay-3">
+                <a href="tienda.html" class="hero-btn primary">
+                    <span>Explorar Colección</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#categorias" class="hero-btn secondary">
+                    <span>Ver Categorías</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Descubre más</span>
+            <div class="scroll-indicator">
+                <div class="scroll-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card animate-fade-up">
+                    <div class="feature-icon">💎</div>
+                    <h3>Materiales Premium</h3>
+                    <p>Oro 18K, plata de ley y piedras preciosas certificadas</p>
+                </div>
+                <div class="feature-card animate-fade-up delay-1">
+                    <div class="feature-icon">🚚</div>
+                    <h3>Envío Gratis</h3>
+                    <p>En todas las compras superiores a $100</p>
+                </div>
+                <div class="feature-card animate-fade-up delay-2">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Pago Seguro</h3>
+                    <p>Transacciones encriptadas con los más altos estándares</p>
+                </div>
+                <div class="feature-card animate-fade-up delay-3">
+                    <div class="feature-icon">↩️</div>
+                    <h3>Devolución Fácil</h3>
+                    <p>30 días para cambios y devoluciones sin complicaciones</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ CATEGORÍAS DESTACADAS ============ -->
+    <section id="categorias" class="categories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Nuestras Colecciones</span>
+                <h2 class="section-title">Categorías Destacadas</h2>
+                <p class="section-desc">Encuentra el estilo perfecto para cada ocasión</p>
+            </div>
+            
+            <div class="categories-grid">
+                <div class="category-card" data-category="cadenas">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600&h=400&fit=crop" alt="Cadenas">
+                        <div class="category-overlay"></div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Cadenas Exclusivas</h3>
+                        <p>Oro y plata de ley</p>
+                        <span class="category-link">Ver colección →</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" data-category="anillos">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=400&fit=crop" alt="Anillos">
+                        <div class="category-overlay"></div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Anillos de Autor</h3>
+                        <p>Diseños únicos</p>
+                        <span class="category-link">Ver colección →</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" data-category="zapatos">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=400&fit=crop" alt="Zapatos">
+                        <div class="category-overlay"></div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Sneakers Premium</h3>
+                        <p>Estilo urbano</p>
+                        <span class="category-link">Ver colección →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ CTA BANNER ============ -->
+    <section class="cta-banner">
+        <div class="container">
+            <div class="cta-content animate-fade-up">
+                <h2>¿Listo para elevar tu estilo?</h2>
+                <p>Únete a LUXE y descubre piezas exclusivas que reflejan tu esencia</p>
+                <a href="tienda.html" class="cta-btn">
+                    <span>Explorar Tienda</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer id="contacto" class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">✦ LUXE</span>
+                <p>Elegancia y sofisticación para quienes aprecian lo excepcional.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">📱</a>
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">📷</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Explorar</h4>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="tienda.html">Tienda</a></li>
+                    <li><a href="#categorias">Categorías</a></li>
+                    <li><a href="#">Novedades</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Soporte</h4>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Envíos</a></li>
+                    <li><a href="#">Devoluciones</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>📧 contacto@luxe.com</p>
+                <p>📞 +505 8935-6363</p>
+                <p>📍 Managua, Nicaragua</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 LUXE. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============ CART MODAL ============ -->
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-modal-content">
+            <div class="cart-header">
+                <h3>Tu Carrito</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PAGE TRANSITION OVERLAY ============ -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="js/config.js"></script>
+    <script src="js/localStorage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html>
