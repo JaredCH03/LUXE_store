@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Producto | LUXE</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
     <style>
         .product-detail-container {
             max-width: 1200px;
@@ -16,21 +18,25 @@
             grid-template-columns: 1fr 1fr;
             gap: 3rem;
         }
+
         .product-gallery {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .main-image {
             width: 100%;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
+
         .thumbnails {
             display: flex;
             gap: 0.5rem;
             overflow-x: auto;
         }
+
         .thumbnail {
             width: 80px;
             height: 80px;
@@ -40,33 +46,40 @@
             border: 2px solid transparent;
             transition: all 0.2s;
         }
+
         .thumbnail.active {
             border-color: #c9a03d;
         }
+
         .product-info {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
+
         .product-title {
             font-size: 2rem;
             font-weight: 700;
         }
+
         .product-price {
             font-size: 1.8rem;
             color: #c9a03d;
             font-weight: 700;
         }
+
         .product-description {
             color: #666;
             line-height: 1.6;
         }
+
         .size-selector {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             margin: 1rem 0;
         }
+
         .size-option {
             padding: 0.5rem 1rem;
             border: 1px solid #ddd;
@@ -74,14 +87,17 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+
         .size-option:hover {
             border-color: #c9a03d;
         }
+
         .size-option.selected {
             background: #c9a03d;
             color: white;
             border-color: #c9a03d;
         }
+
         .add-to-cart-btn {
             background: #c9a03d;
             color: white;
@@ -93,10 +109,12 @@
             transition: all 0.3s;
             margin-top: 1rem;
         }
+
         .add-to-cart-btn:hover {
             background: #b58c2e;
             transform: translateY(-2px);
         }
+
         @media (max-width: 768px) {
             .product-detail-container {
                 grid-template-columns: 1fr;
@@ -105,6 +123,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -115,14 +134,16 @@
             </div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Inicio</a></li>
-                <li><a href="index.html#cadenas">Cadenas</a></li>
-                <li><a href="index.html#anillos">Anillos</a></li>
-                <li><a href="index.html#zapatos">Zapatos</a></li>
+                <li><a href="tienda.html">Tienda</a></li>
+                <li><a href="tienda.html#cadenas">Cadenas</a></li>
+                <li><a href="tienda.html#anillos">Anillos</a></li>
+                <li><a href="tienda.html#zapatos">Zapatos</a></li>
             </ul>
             <div class="nav-icons">
                 <div class="logged-out-only">
                     <a href="login.html" class="user-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
@@ -131,7 +152,8 @@
                 <div class="logged-in-only" style="display: none;">
                     <div class="user-menu">
                         <button class="user-btn" id="userMenuBtn">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
@@ -221,4 +243,5 @@
     <script src="js/app.js"></script>
     <script src="js/detail.js"></script>
 </body>
+
 </html>
