@@ -88,14 +88,65 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
-        const product = await Product.getById(req.params.id);
-        if (!product) return res.status(404).json({ success: false, message: 'Producto no encontrado' });
-        if (product.seller_id !== req.user.id && req.user.role !== 'admin')
+        const productId = req.params.id;
+        
+        // Verificar que el producto existe
+        const product = await Product.getById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+        }
+        
+        // Verificar permisos
+        if (product.seller_id !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'No tienes permiso' });
-        const updated = await Product.update(req.params.id, req.body);
-        updated ? res.json({ success: true, message: 'Producto actualizado' }) : res.status(400).json({ success: false, message: 'Error al actualizar' });
+        }
+        
+        const { removeImages, additionalImages, ...updateData } = req.body;
+        
+        console.log('📦 Datos recibidos:', req.body);
+        console.log('📦 updateData:', updateData);
+        
+        // Si hay sizes, asegurar que sea un objeto válido
+        if (updateData.sizes !== undefined) {
+            try {
+                if (typeof updateData.sizes === 'string') {
+                    updateData.sizes = JSON.parse(updateData.sizes);
+                }
+                // Si está vacío, usar objeto vacío
+                if (!updateData.sizes || typeof updateData.sizes !== 'object') {
+                    updateData.sizes = {};
+                }
+            } catch (e) {
+                console.error('Error al parsear sizes:', e);
+                updateData.sizes = {};
+            }
+        }
+        
+        console.log('📦 sizes procesado:', updateData.sizes);
+        
+        // Actualizar datos principales
+        const updated = await Product.update(productId, updateData);
+        
+        // Eliminar imágenes marcadas
+        if (removeImages && removeImages.length > 0) {
+            await Product.deleteProductImagesByIds(removeImages);
+        }
+        
+        // Agregar nuevas imágenes
+        if (additionalImages && additionalImages.length > 0) {
+            for (let i = 0; i < additionalImages.length; i++) {
+                await Product.addProductImage(productId, additionalImages[i], i);
+            }
+        }
+        
+        if (updated) {
+            res.json({ success: true, message: 'Producto actualizado correctamente' });
+        } else {
+            res.status(400).json({ success: false, message: 'No se realizaron cambios' });
+        }
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Error al actualizar producto' });
+        console.error('Error al actualizar producto:', error);
+        res.status(500).json({ success: false, message: 'Error al actualizar producto: ' + error.message });
     }
 };
 
