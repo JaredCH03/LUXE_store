@@ -69,7 +69,7 @@ async function register(name, email, password, confirmPassword, role) {
             showAlert('Registro exitoso. Redirigiendo...', 'success');
             setTimeout(() => {
                 if (role === 'seller') window.location.href = 'dashboard/index.html';
-                else window.location.href = 'index.html';
+                else window.location.href = 'tienda.html';
             }, 1500);
             return true;
         } else {
@@ -121,7 +121,7 @@ async function login(email, password) {
                 if (userRole === 'seller') {
                     window.location.href = 'dashboard/index.html';
                 } else {
-                    window.location.href = 'index.html';
+                    window.location.href = 'tienda.html';
                 }
             }, 1500);
             return true;
@@ -137,4 +137,3 @@ async function login(email, password) {
         return false;
     }
 }
-
