@@ -36,6 +36,6 @@ function logout() {
     if (window.location.pathname.includes('/dashboard/')) {
         window.location.href = '../login.html';
     } else {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 }
