@@ -42,34 +42,170 @@ async function fetchMyProducts() {
     }
 }
 
+// =====================================================
+// DASHBOARD VENDEDOR - VERSIÓN CORREGIDA (ROBUSTA)
+// =====================================================
+
+// Reemplaza la función fetchSellerStats() completa con esta versión mejorada:
+
 async function fetchSellerStats() {
     const token = getToken();
     if (!token) return { totalProducts: 0, totalSales: 0, totalRevenue: 0, totalItemsSold: 0 };
+    
     try {
         const products = await fetchMyProducts();
         let orders = [];
+        
         try {
             const ordersResponse = await fetch(`${API_URL}/orders/seller`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const ordersData = await ordersResponse.json();
-            orders = ordersData.success ? ordersData.orders : [];
-        } catch (e) { orders = []; }
-        const totalProducts = products.length;
-        const totalSales = orders.length;
-        const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
-        const totalItemsSold = orders.reduce((sum, order) => {
-            if (order.items && Array.isArray(order.items)) {
-                return sum + order.items.reduce((s, item) => s + (item.cantidad || 0), 0);
+            
+            if (!ordersResponse.ok) {
+                console.warn('Error al obtener órdenes:', ordersResponse.status);
+                orders = [];
+            } else {
+                const ordersData = await ordersResponse.json();
+                orders = ordersData.success ? ordersData.orders : [];
             }
-            return sum;
-        }, 0);
+        } catch (e) {
+            console.warn('Error en fetch de órdenes:', e);
+            orders = [];
+        }
+        
+        // Calcular estadísticas con validaciones
+        const totalProducts = Array.isArray(products) ? products.length : 0;
+        const totalSales = Array.isArray(orders) ? orders.length : 0;
+        
+        // Calcular ingresos totales (con validación)
+        const totalRevenue = Array.isArray(orders) 
+            ? orders.reduce((sum, order) => {
+                const orderTotal = parseFloat(order.total) || 0;
+                return sum + orderTotal;
+            }, 0)
+            : 0;
+        
+        // Calcular items vendidos (con validación)
+        const totalItemsSold = Array.isArray(orders)
+            ? orders.reduce((sum, order) => {
+                if (order.items && Array.isArray(order.items)) {
+                    return sum + order.items.reduce((s, item) => {
+                        // Aceptar tanto 'quantity' como 'cantidad'
+                        const qty = item.quantity || item.cantidad || 0;
+                        return s + qty;
+                    }, 0);
+                }
+                return sum;
+            }, 0)
+            : 0;
+        
+        console.log('📊 Estadísticas calculadas:', {
+            totalProducts,
+            totalSales,
+            totalRevenue,
+            totalItemsSold
+        });
+        
         return { totalProducts, totalSales, totalRevenue, totalItemsSold };
+        
     } catch (error) {
+        console.error('Error en fetchSellerStats:', error);
         return { totalProducts: 0, totalSales: 0, totalRevenue: 0, totalItemsSold: 0 };
     }
 }
 
+
+
+async function loadDashboardContent() {
+    const user = getCurrentUser();
+    if (!user) {
+        console.error('No hay usuario autenticado');
+        return;
+    }
+    
+    console.log('👤 Usuario:', user);
+    
+    const mainContent = document.getElementById('dynamicContent') || document.querySelector('.dashboard-main');
+    if (!mainContent) {
+        console.error('No se encontró el contenedor principal');
+        return;
+    }
+    
+    // Mostrar loading
+    mainContent.innerHTML = '<div style="text-align:center; padding:3rem;">Cargando dashboard...</div>';
+    
+    try {
+        const stats = await fetchSellerStats();
+        const products = await fetchMyProducts();
+        
+        console.log('📦 Productos obtenidos:', products?.length || 0);
+        console.log('📊 Stats:', stats);
+        
+        // Asegurar que los valores son números válidos
+        const totalProducts = stats.totalProducts || 0;
+        const totalSales = stats.totalSales || 0;
+        const totalRevenue = parseFloat(stats.totalRevenue) || 0;
+        const totalItemsSold = stats.totalItemsSold || 0;
+        
+        // Limitar productos mostrados
+        const recentProducts = Array.isArray(products) ? products.slice(0, 5) : [];
+        
+        mainContent.innerHTML = `
+            <h1>Bienvenido, ${user.name || 'Vendedor'}</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Productos</h3>
+                    <div class="stat-value">${totalProducts}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Ventas Totales</h3>
+                    <div class="stat-value">${totalSales}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Ingresos</h3>
+                    <div class="stat-value">$${totalRevenue.toFixed(2)}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Productos Vendidos</h3>
+                    <div class="stat-value">${totalItemsSold}</div>
+                </div>
+            </div>
+            
+            <h3>Últimos Productos Agregados</h3>
+            ${recentProducts.length > 0 ? `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Ventas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recentProducts.map(p => `
+                            <tr>
+                                <td>${p.name || 'Sin nombre'}</td>
+                                <td>$${parseFloat(p.price || 0).toFixed(2)}</td>
+                                <td>${p.stock || 0}</td>
+                                <td>${p.sales || 0}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            ` : '<p>No hay productos aún. ¡Agrega tu primer producto!</p>'}
+        `;
+        
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+        mainContent.innerHTML = `
+            <h1>Error al cargar el dashboard</h1>
+            <p>Por favor, recarga la página o contacta al soporte.</p>
+            <p style="color: #666; font-size: 0.9rem;">${error.message}</p>
+        `;
+    }
+}
 async function fetchSellerOrders() {
     const token = getToken();
     if (!token) return [];
@@ -315,28 +451,10 @@ function escapeHtml(str) {
 
 // ============ PRODUCTOS UI ============
 
-async function renderProductsList() {
-    const products = await fetchMyProducts();
-    const tbody = document.getElementById('productsList');
-    if (!tbody) return;
-    if (products.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">No tienes productos aún. ¡Agrega tu primer producto!</td></tr>';
-        return;
-    }
-    tbody.innerHTML = products.map(p => `
-        <tr>
-            <td><img src="${p.image || 'https://via.placeholder.com/50'}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;"></td>
-            <td>${p.name}</td>
-            <td>$${parseFloat(p.price).toFixed(2)}</td>
-            <td>${p.stock || 0}</td>
-            <td>${p.sales || 0}</td>
-            <td>
-                <button class="btn-edit" onclick="editProduct(${p.id})">Editar</button>
-                <button class="btn-danger" onclick="deleteProductItem(${p.id})">Eliminar</button>
-            </td>
-        </tr>
-    `).join('');
-}
+// Redirigir a la página de edición
+window.editProduct = function(productId) {
+    window.location.href = `edit-product.html?id=${productId}`;
+};
 
 async function addNewProduct() {
     const name = document.getElementById('productName')?.value;
@@ -400,38 +518,7 @@ sizes.forEach(s => {
     }
 }
 
-window.editProduct = async function(productId) {
-    const products = await fetchMyProducts();
-    const product = products.find(p => p.id === productId);
-    if (product) {
-        const newName = prompt('Nuevo nombre:', product.name);
-        const newPrice = prompt('Nuevo precio:', product.price);
-        const newStock = prompt('Nuevo stock:', product.stock);
-        if (newName && newPrice && newStock) {
-            const token = getToken();
-            const response = await fetch(`${API_URL}/products/${productId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name: newName,
-                    price: parseFloat(newPrice),
-                    stock: parseInt(newStock)
-                })
-            });
-            const data = await response.json();
-            if (data.success) {
-                showDashboardNotification('Producto actualizado', 'success');
-                await renderProductsList();
-                if (document.getElementById('dynamicContent')) await loadDashboardContent();
-            } else {
-                showDashboardNotification('Error al actualizar', 'error');
-            }
-        }
-    }
-};
+
 
 window.deleteProductItem = function(productId) {
     pendingDeleteProductId = productId;
@@ -439,6 +526,51 @@ window.deleteProductItem = function(productId) {
     if (modal) modal.style.display = 'flex';
 };
 
+// ============ FUNCIONES UI ============
+
+async function renderProductsList() {
+    const products = await fetchMyProducts();
+    const tbody = document.getElementById('productsList');
+    
+    if (!tbody) {
+        console.warn('Elemento productsList no encontrado');
+        return;
+    }
+    
+    if (!products || products.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align:center; padding:3rem; background:#fafaf8;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">📦</div>
+                    <h3 style="color:#666; margin-bottom:0.5rem;">No tienes productos aún</h3>
+                    <p style="color:#999;">¡Agrega tu primer producto usando el formulario de arriba!</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = products.map(p => `
+        <tr>
+            <td>
+                <img src="${p.image || 'https://via.placeholder.com/50'}" 
+                     alt="${p.name}" 
+                     style="width:50px; height:50px; object-fit:cover; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);"
+                     onerror="this.src='https://via.placeholder.com/50/1a1a1a/c9a03d?text=LUXE'">
+            </td>
+            <td style="font-weight:500;">${p.name || 'Sin nombre'}</td>
+            <td style="color:#c9a03d; font-weight:600;">$${parseFloat(p.price || 0).toFixed(2)}</td>
+            <td>${p.stock || 0}</td>
+            <td>${p.sales || 0}</td>
+            <td>
+                <button class="btn-edit" onclick="window.location.href='edit-product.html?id=${p.id}'">✎ Editar</button>
+                <button class="btn-danger" onclick="deleteProductItem(${p.id})">🗑 Eliminar</button>
+            </td>
+        </tr>
+    `).join('');
+    
+    console.log(`✅ ${products.length} productos cargados`);
+}
 // ============ MODAL ELIMINAR ============
 
 function showDeleteConfirmModal(productId) {
