@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "proyecto/frontend"
+		},
+		{
+			"path": "proyecto/backend"
+		},
+		{
+			"path": "proyecto"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "frontend"
+	}
+}
